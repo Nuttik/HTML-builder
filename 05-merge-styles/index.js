@@ -35,9 +35,6 @@ async function createBoundleStyle() {
     path.join(outputPath, 'bundle.css'),
   );
 
-  //строка для записи стилей
-  let strStyles = '';
-
   //записываем содержимое всех файлов с разрешением .css
   for (const file of filesStyles) {
     if (file.slice(-4) === '.css') {
@@ -48,7 +45,6 @@ async function createBoundleStyle() {
       );
       streamReaer.on('data', function (chunk) {
         const styleFromFile = chunk.toString();
-        strStyles += styleFromFile;
         streamWriter.write(styleFromFile);
       });
     }
