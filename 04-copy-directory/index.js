@@ -5,7 +5,7 @@ const { unlink } = require('node:fs/promises');
 const path = require('path');
 
 async function copyDir() {
-  //путь к исходной  папки
+  //путь к исходной папке
   const sourcePath = path.join(__dirname, 'files');
 
   //путь к папке files-copy
