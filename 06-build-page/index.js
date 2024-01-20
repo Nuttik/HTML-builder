@@ -151,7 +151,7 @@ async function readHtml() {
   const tempPath = path.join(__dirname, 'template.html');
   const stream = fs.createReadStream(tempPath, 'utf-8');
   let str = '';
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     stream.on('data', (chunk) => (str += chunk));
     stream.on('end', () => {
       resolve(str);
@@ -183,7 +183,7 @@ function findTag(html) {
 }
 
 async function buildHtml(html, arrayTag, sourceComponents) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     arrayTag.forEach((tag) => {
       let component = '';
       const streamComponent = fs.createReadStream(
