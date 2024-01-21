@@ -60,7 +60,7 @@ async function buildPage() {
   streamWriterHtml.write(newHtml);
 }
 
-//ФУНКЦИИ
+//ФУНКЦИИ ДЛЯ СБОРКИ
 
 //Удаляем папку дист, если она была создана в предыдущей итерации
 async function removeDistFolder() {
@@ -160,25 +160,9 @@ async function readHtml() {
 }
 
 function findTag(html) {
-  const arr = [];
-  const start = '{{';
-  const end = '}}';
-
-  //ищем в полученном тексте все теги
-  let index = 0;
-
-  while (true) {
-    let startIndex = html.indexOf(start, index);
-    if (startIndex != -1) {
-      const endIndex = html.indexOf(end, startIndex);
-      //содержимое между {{ и }}
-      const tagName = html.slice(startIndex + 2, endIndex);
-      arr.push(tagName);
-      index = endIndex;
-    } else {
-      break;
-    }
-  }
+  //находим все строки заключенные в двойные фигурные скобки
+  const regexp = /{{[a-z]*?}}/g;
+  const arr = html.match(regexp);
   return arr;
 }
 
@@ -186,18 +170,15 @@ async function buildHtml(html, arrayTag, sourceComponents) {
   return new Promise((resolve) => {
     arrayTag.forEach((tag) => {
       let component = '';
+      let nameComponent = tag.slice(2, -2);
       const streamComponent = fs.createReadStream(
-        path.join(sourceComponents, `${tag}.html`),
+        path.join(sourceComponents, `${nameComponent}.html`),
         'utf-8',
       );
       streamComponent.on('data', (chunk) => (component += chunk));
       streamComponent.on('end', () => {
-        html =
-          html.slice(0, html.indexOf(`{{${tag}`)) +
-          component +
-          html.slice(html.indexOf(`${tag}}}`) + tag.length + 2);
-
-        //если это последний тег в массиве, то пора записывать данные в файл
+        //заменяем тег на содержимое одноименного файла
+        html = html.replace(tag, component);
         if (arrayTag.indexOf(tag) === arrayTag.length - 1) {
           resolve(html);
         }
